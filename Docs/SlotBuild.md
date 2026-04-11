@@ -9,3 +9,5 @@ Jonas created a platform to stand on up by the slot machine buttons. Jonas then 
 ### Gooner museum
 
 Theo is creating a museuem behind the slot machine with 22 gooner pictures
+
+He got banned for 3 days 💀
