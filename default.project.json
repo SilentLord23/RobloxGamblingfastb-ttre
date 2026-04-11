@@ -7,10 +7,6 @@
         "$path": "src/shared"
     },
 
-    "GamblingScripts": {
-        "$path": "src/gamblingScripts"
-    },
-
     "ServerScriptService": {
       "Server": {
         "$path": "src/server"
