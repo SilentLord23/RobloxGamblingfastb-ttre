@@ -4,15 +4,11 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "Shared": {
         "$path": "src/shared"
-      }
     },
 
     "GamblingScripts": {
-      "Shared": {
         "$path": "src/gamblingScripts"
-      }
     },
 
     "ServerScriptService": {
@@ -23,10 +19,8 @@
 
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "Client": {
           "$path": "src/client"
         }
-      }
     },
 
     "Workspace": {
