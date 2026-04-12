@@ -12,7 +12,7 @@ local function unweightedSpin (arr: Matrix)
 
 end
 
-local function GenerateBoard (symbols: SymbolList)
+local function GenerateBoard (symbols)
     local Board = {{}}
 
     local totalWeight = 0
