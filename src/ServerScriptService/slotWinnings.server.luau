@@ -63,13 +63,16 @@ function SlotMachineLogic.CalculateWinnings(board, currentBet)
     return totalWinnings
 end
 
--- The Process Engine: Imports external board and calculates result
+-- This handles the imports and runs the spin
 function SlotMachineLogic.ProcessSpin(betAmount)
-    -- Requires the SlotMachine module which is in the same folder as the service script
-    -- NOTE: script.Parent here assumes this call is made from the Service script
-    local slotMachine = require(ServerScriptService.slotMachine) 
+    -- Import the Generator and the Data
+    local slotMachine = require(ServerScriptService:WaitForChild("slotMachine"))
+    local symbVal = require(ServerScriptService:WaitForChild("symbVal")) 
     
-    local board = slotMachine.GenerateBoard(SymbolList)
+    -- Generate the board using the symbol list from symbVal
+    local board = slotMachine.GenerateBoard(symbVal.SymbolList)
+    
+    -- Calculate result
     local winnings = SlotMachineLogic.CalculateWinnings(board, betAmount)
     
     return board, winnings
