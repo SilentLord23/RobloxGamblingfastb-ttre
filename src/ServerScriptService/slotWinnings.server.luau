@@ -69,7 +69,7 @@ function SlotMachineLogic.ProcessSpin(betAmount)
     -- NOTE: script.Parent here assumes this call is made from the Service script
     local slotMachine = require(ServerScriptService.slotMachine) 
     
-    local board = slotMachine.GenerateBoard()
+    local board = slotMachine.GenerateBoard(SymbolList)
     local winnings = SlotMachineLogic.CalculateWinnings(board, betAmount)
     
     return board, winnings
