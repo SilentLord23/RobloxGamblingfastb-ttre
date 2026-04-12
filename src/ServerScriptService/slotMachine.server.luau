@@ -25,7 +25,7 @@ local function GenerateBoard (symbols: SymbolList)
         Board[i] = {}
 
         for j = 1, 5 do
-            local pickedSymbol = string
+            local pickedSymbol = ""
             local rng = math.random() * totalWeight
             local sum = 0
 
