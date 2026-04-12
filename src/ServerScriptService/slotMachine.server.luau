@@ -11,9 +11,6 @@ local function unweightedSpin (arr: Matrix)
     end
 
 end
-    
--- TODO
--- Define a symbollist
 
 local function GenerateBoard (symbols: SymbolList)
     local Board = {{}}
@@ -24,13 +21,23 @@ local function GenerateBoard (symbols: SymbolList)
         totalWeight += symbols.weight
     end
 
-    local rng = math.random() * totalWeight
-    local sum = 0
+    for i = 1, 3 do
+        Board[i] = {}
 
-    for _, symbol in ipairs(symbols) do
-        sum += symbol.weight
-        if rng <= sum then
-            return symbol.id
+        for j = 1, 5 do
+            local pickedSymbol = string
+            local rng = math.random() * totalWeight
+            local sum = 0
+
+            for _, symbol in ipairs(symbols) do
+                sum += symbol.weight
+                if rng <= sum then
+                    pickedSymbol = symbol.id
+                    return
+                end
+            end
+
+            Board[i][j] = pickedSymbol
         end
     end
 
