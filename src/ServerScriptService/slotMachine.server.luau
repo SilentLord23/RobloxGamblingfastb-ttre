@@ -15,8 +15,9 @@ end
 -- TODO
 -- Define a symbollist
 
-local function weightedSpin (arr: Matrix, symbols: SymbolList)
-    
+local function GenerateBoard (symbols: SymbolList)
+    local Board = {{}}
+
     local totalWeight = 0
 
     for _, symbol in ipairs(symbols) do
@@ -33,4 +34,5 @@ local function weightedSpin (arr: Matrix, symbols: SymbolList)
         end
     end
 
+    return Board
 end
