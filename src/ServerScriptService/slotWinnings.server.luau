@@ -65,11 +65,11 @@ end
 
 -- The Process Engine: Imports external board and calculates result
 function SlotMachineLogic.ProcessSpin(betAmount)
-    -- Requires the symbVal module which is in the same folder as the service script
+    -- Requires the SlotMachine module which is in the same folder as the service script
     -- NOTE: script.Parent here assumes this call is made from the Service script
-    local symbVal = require(ServerScriptService.symbVal) 
+    local slotMachine = require(ServerScriptService.slotMachine) 
     
-    local board = symbVal.GenerateBoard()
+    local board = slotMachine.GenerateBoard()
     local winnings = SlotMachineLogic.CalculateWinnings(board, betAmount)
     
     return board, winnings
