@@ -33,14 +33,14 @@ local function executeSpin(player, betAmount)
 
 	debounce = true
 
-	physicalButton.Color = Color3.fromRGB(255, 0, 0)
+	physicalButton.Color = Color3.fromRGB(255, 255, 255)
 	physicalButton.Position -= Vector3.new(0, 0.2, 0)
 
 	local board, winnings = SlotLogic.ProcessSpin(finalBet)
 	
 	task.wait(3) 
 
-	physicalButton.Color = Color3.fromRGB(255, 255, 255)
+	physicalButton.Color = Color3.fromRGB(255, 0, 0)
 	physicalButton.Position += Vector3.new(0, 0.2, 0)
 	
 	debounce = false
