@@ -9,7 +9,7 @@ local physicalSpinBtn = Workspace:WaitForChild("PhysicalSpinButton")
 local betButtonsFolder = Workspace:WaitForChild("PhysicalBetButtons")
 
 local debounce = false
-local DEFAULT_BET = 5
+local DEFAULT_BET = 10
 local STARTING_BALANCE = 1000.00
 local VALID_BETS = {5, 10, 15, 20, 25, 50, 75, 100, 250, 500}
 
