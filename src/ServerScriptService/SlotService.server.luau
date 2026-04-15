@@ -1,17 +1,20 @@
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+local Players = game:GetService("Players")
 
 local SlotLogic = require(ReplicatedStorage.Modules.SlotMachineLogic)
-local physicalButton = Workspace:WaitForChild("PhysicalSpinButton")
 local spinRemote = ReplicatedStorage:WaitForChild("SpinRequest")
 
+local physicalSpinBtn = Workspace:WaitForChild("PhysicalSpinButton")
+local betButtonsFolder = Workspace:WaitForChild("PhysicalBetButtons")
+
 local debounce = false
-local DEFAULT_BET = 10
+local DEFAULT_BET = 5
+local STARTING_BALANCE = 1000.00
 local VALID_BETS = {5, 10, 15, 20, 25, 50, 75, 100, 250, 500}
 
--- Stores the currently selected bet for each player
 local PlayerBets = {}
+local PlayerBalances = {}
 
 local function isValidBet(amount)
 	for _, val in ipairs(VALID_BETS) do
@@ -20,52 +23,74 @@ local function isValidBet(amount)
 	return false
 end
 
-local function executeSpin(player, betAmount)
+local function updateClientUI(player)
+	spinRemote:FireClient(player, "UpdateDisplay", PlayerBalances[player.UserId], PlayerBets[player.UserId])
+end
+
+Players.PlayerAdded:Connect(function(player)
+	PlayerBalances[player.UserId] = STARTING_BALANCE
+	PlayerBets[player.UserId] = DEFAULT_BET
+	task.wait(1)
+	updateClientUI(player)
+end)
+
+local function executeSpin(player)
 	if debounce then return end
 	
-	-- Use the provided betAmount, or fallback to the player's last selection, or the default
-	local finalBet = betAmount or PlayerBets[player.UserId] or DEFAULT_BET
+	local finalBet = PlayerBets[player.UserId] or DEFAULT_BET
+	local currentBalance = PlayerBalances[player.UserId] or 0
 
-	if not isValidBet(finalBet) then 
-		warn(player.Name .. " attempted an invalid bet: " .. tostring(finalBet))
-		return nil 
-	end
+	if currentBalance < finalBet then return end
 
 	debounce = true
 
-	physicalButton.Color = Color3.fromRGB(255, 255, 255)
-	physicalButton.Position -= Vector3.new(0, 0.2, 0)
+	PlayerBalances[player.UserId] -= finalBet
+	updateClientUI(player)
+
+	physicalSpinBtn.Color = Color3.fromRGB(255, 0, 0)
+	physicalSpinBtn.Position -= Vector3.new(0, 0.2, 0)
 
 	local board, winnings = SlotLogic.ProcessSpin(finalBet)
 	
 	task.wait(3) 
 
-	physicalButton.Color = Color3.fromRGB(255, 0, 0)
-	physicalButton.Position += Vector3.new(0, 0.2, 0)
+	PlayerBalances[player.UserId] += winnings
 	
+	physicalSpinBtn.Color = Color3.fromRGB(255, 255, 255)
+	physicalSpinBtn.Position += Vector3.new(0, 0.2, 0)
+	
+	updateClientUI(player)
 	debounce = false
-	return board, winnings
 end
 
--- Update the player's selected bet when they click a button
-spinRemote.OnServerInvoke = function(player, action, value)
-	if action == "UpdateBet" then
-		if isValidBet(value) then
-			PlayerBets[player.UserId] = value
-			return true
-		end
-	elseif action == "Spin" then
-		return executeSpin(player, value)
-	end
-	return nil
-end
-
-physicalButton.Touched:Connect(function(otherPart)
-	local character = otherPart.Parent
-	local player = game.Players:GetPlayerFromCharacter(character)
-	
+physicalSpinBtn.Touched:Connect(function(otherPart)
+	local player = Players:GetPlayerFromCharacter(otherPart.Parent)
 	if player and not debounce then
-		-- Jumper uses their previously selected bet
-		executeSpin(player) 
+		executeSpin(player)
 	end
 end)
+
+for _, button in ipairs(betButtonsFolder:GetChildren()) do
+	if button:IsA("BasePart") then
+		button.Touched:Connect(function(otherPart)
+			if debounce then return end
+			local player = Players:GetPlayerFromCharacter(otherPart.Parent)
+			if player then
+				local amt = tonumber(button.Name)
+				if isValidBet(amt) then
+					PlayerBets[player.UserId] = amt
+					updateClientUI(player)
+					
+					button.Color = Color3.fromRGB(0, 255, 0)
+					task.delay(0.2, function() button.Color = Color3.fromRGB(255, 255, 255) end)
+				end
+			end
+		end)
+	end
+end
+
+spinRemote.OnServerInvoke = function(player, action)
+	if action == "GetInit" then
+		return PlayerBalances[player.UserId], PlayerBets[player.UserId]
+	end
+end
