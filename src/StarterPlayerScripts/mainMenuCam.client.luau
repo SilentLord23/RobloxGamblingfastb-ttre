@@ -1,3 +1,4 @@
+local player = game.Players.LocalPlayer
 local camera = game.Workspace.CurrentCamera
 local mainMenuCam = game.Workspace:WaitForChild("mainMenuCamera")
 
