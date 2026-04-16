@@ -12,4 +12,5 @@
 ## Main menu button and camera
 
 - This is not working currently. Followed a tutorial:
+- Fix found, it was a Rojo problem for more info check issue #44
 https://www.youtube.com/shorts/1h_8QJR5Flk
