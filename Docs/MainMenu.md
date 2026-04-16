@@ -9,6 +9,7 @@
 - Added tent and car models from the asset store.
 - Added mainMenuCamera part to act as camera
 
-## Main men
+## Main menu button and camera
 
-- 
+- This is not working currently. Followed a tutorial:
+https://www.youtube.com/shorts/1h_8QJR5Flk
