@@ -17,6 +17,11 @@
         }
     },
 
+    "StarterGui": {
+          "$path": "src/StarterGui"
+        }
+    },
+
     "ServerStorage": {
         "$path": "src/ServerStorage"
     },
