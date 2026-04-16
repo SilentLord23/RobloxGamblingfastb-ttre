@@ -4,23 +4,28 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-        "$path": "src/ReplicatedStorage"
+      "$path": "src/ReplicatedStorage"
     },
 
     "ServerScriptService": {
-        "$path": "src/ServerScriptService"
+      "$path": "src/ServerScriptService"
     },
 
     "StarterPlayer": {
       "StarterPlayerScripts": {
-          "$path": "src/StarterPlayerScripts"
-        }
+        "$path": "src/StarterPlayerScripts"
+      }
+    },
+
+    "StarterGui": {
+      "StarterGuiScripts": {
+        "$path": "src/StarterGui"
+      }
     },
 
     "ServerStorage": {
-        "$path": "src/ServerStorage"
+      "$path": "src/ServerStorage"
     },
-
 
     "Workspace": {
       "$properties": {
@@ -30,38 +35,24 @@
         "$className": "Part",
         "$properties": {
           "Anchored": true,
-          "Color": [
-            0.38823,
-            0.37254,
-            0.38823
-          ],
+          "Color": [0.38823, 0.37254, 0.38823],
           "Locked": true,
-          "Position": [
-            0,
-            -10,
-            0
-          ],
-          "Size": [
-            512,
-            20,
-            512
-          ]
+          "Position": [0, -10, 0],
+          "Size": [512, 20, 512]
         }
       }
     },
+
     "Lighting": {
       "$properties": {
-        "Ambient": [
-          0,
-          0,
-          0
-        ],
+        "Ambient": [0, 0, 0],
         "Brightness": 2,
         "GlobalShadows": true,
         "Outlines": false,
         "Technology": "Voxel"
       }
     },
+
     "SoundService": {
       "$properties": {
         "RespectFilteringEnabled": true
