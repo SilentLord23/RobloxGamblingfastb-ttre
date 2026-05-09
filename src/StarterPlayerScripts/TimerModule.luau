@@ -1,9 +1,11 @@
+local JumpscareModule = require(script.Parent:WaitForChild("JumpscareModule"))
+
 local TimerModule = {}
 
 function TimerModule.startTimer(time)
     print("Timer started!")
 
-    timer = time
+    local timer = time
 
 	while timer > 0 do
 		timer -= 1
