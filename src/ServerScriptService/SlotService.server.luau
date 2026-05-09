@@ -23,6 +23,12 @@ local function isValidBet(amount)
 	return false
 end
 
+-- I think we need to have a server wide balance since there is only one machine
+-- this would then update balance i think
+-- local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- local balance = ReplicatedStorage:WaitForChild("GlobalBalance")
+-- balance.Value += 100
+
 local function updateClientUI(player)
 	spinRemote:FireClient(player, "UpdateDisplay", PlayerBalances[player.UserId], PlayerBets[player.UserId])
 end
