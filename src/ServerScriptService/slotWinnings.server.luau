@@ -71,7 +71,7 @@ function SlotMachineLogic.ProcessSpin(betAmount)
     local symbVal = script.Parent:WaitForChild("symbVal")
     
     -- Generate the board using the symbol list from symbVal
-    local board = slotMachine.GenerateBoard(symbVal.SymbolList)
+    local board = slotMachine.GenerateBoard(symbVal.symbols)
     
     -- Calculate result
     local winnings = SlotMachineLogic.CalculateWinnings(board, betAmount)
