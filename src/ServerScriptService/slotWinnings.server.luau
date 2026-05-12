@@ -66,8 +66,9 @@ end
 -- This handles the imports and runs the spin
 function SlotMachineLogic.ProcessSpin(betAmount)
     -- Import the Generator and the Data
-    local slotMachine = require(ServerScriptService:WaitForChild("slotMachine"))
-    local symbVal = require(ServerScriptService:WaitForChild("symbVal")) 
+    local slotMachine = script.Parent:WaitForChild("slotMachine")
+
+    local symbVal = script.Parent:WaitForChild("symbVal")
     
     -- Generate the board using the symbol list from symbVal
     local board = slotMachine.GenerateBoard(symbVal.symbols)
