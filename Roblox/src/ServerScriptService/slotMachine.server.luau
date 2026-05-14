@@ -4,6 +4,8 @@ type Symbol = {
 	id: number,
 	weight: number,
 }
+local row = 3
+local col = 5
 type SymbolList = { Symbol }
 
 -- All possible symbols in the slot machine
@@ -31,11 +33,11 @@ local bonusSymbolsList: SymbolList = {
 type Matrix = { { number } }
 
 local function unweightedSpin(arr: Matrix)
-	for i = 1, 3 do
+	for i = 1, row do
 		arr[i] = {}
 
-		for j = 1, 5 do
-			arr[i][j] = Random.NextInteger(1, 9)
+		for j = 1, col do
+			arr[i][j] = math.random(1, 9)
 		end
 	end
 end
@@ -52,10 +54,10 @@ local function GenerateBoard(symbols)
 	end
 
 	-- For each grid spot
-	for i = 1, 3 do
+	for i = 1, row do
 		Board[i] = {}
 
-		for j = 1, 5 do
+		for j = 1, col do
 			local pickedSymbol = ""
 			-- Generate a float between 0 and 1 and multply with totalweight
 			-- This gives us a number between 0 and totalweight
@@ -78,7 +80,7 @@ local function GenerateBoard(symbols)
 				sum += symbol.weight
 				if rng <= sum then
 					pickedSymbol = symbol.id
-					return
+					break
 				end
 			end
 
@@ -93,13 +95,13 @@ local function autoBonusSpin()
 	local bonusSpins = 5
 
 	-- do 1 spin with the bonus spin symbols
-	local board = GenerateBoard(symbVal.bonusSymbols)
+	local board = GenerateBoard(bonusSymbolsList)
 	-- show the board
-	showBoard()
+	showBoard(board)
 	-- give bonus spins for bonus symbol
     -- remove bonus symbols before next spin
-	for i = 1, 3 do
-        for j = 1,5 do
+	for i = 1, row do
+        for j = 1, col do
             if board[i][j] == 10 then
                 bonusSpins += 1
                 board[i][j] = 11
@@ -126,15 +128,15 @@ local function autoBonusSpin()
                 end
             end
 	    end
-        showBoard()
+        showBoard(board)
         bonusSpins -= 1
     end
 
 end
 
 local function showBoard(board)
-	for i = 1, 3 do
-		for j = 1, 5 do
+	for i = 1, row do
+		for j = 1, col do
             local value = board[i][j]
 
 	        local partName = "Cell_" .. i .. "_" .. j
