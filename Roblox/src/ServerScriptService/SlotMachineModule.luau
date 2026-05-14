@@ -1,3 +1,5 @@
+local SlotMachineModule = {}
+
 local gridFolder = workspace.Grid
 
 type Symbol = {
@@ -7,6 +9,7 @@ type Symbol = {
 local row = 3
 local col = 5
 type SymbolList = { Symbol }
+type Matrix = { { number } }
 
 -- All possible symbols in the slot machine
 -- Higher weight = higher probability of being selected so 1 is most common and 9 least common
@@ -29,21 +32,8 @@ local bonusSymbolsList: SymbolList = {
 	{ id = 11, weight = 19 }, -- nothing
 }
 
-
-type Matrix = { { number } }
-
-local function unweightedSpin(arr: Matrix)
-	for i = 1, row do
-		arr[i] = {}
-
-		for j = 1, col do
-			arr[i][j] = math.random(1, 9)
-		end
-	end
-end
-
-local function GenerateBoard(symbols)
-	-- comments for you Fredrik, some may be unnecessary. 
+function SlotMachineModule.GenerateBoard(symbols: SymbolList): Matrix
+	-- comments for you Fredrik, some may be unnecessary.
 	-- Edgar ask fredrik for context
 	local Board = { {} }
 
@@ -62,11 +52,11 @@ local function GenerateBoard(symbols)
 			-- Generate a float between 0 and 1 and multply with totalweight
 			-- This gives us a number between 0 and totalweight
 			-- ex. 0.45 * 200 = 90
-			local rng = math.random() * totalWeight
-			local sum = 0
+			local randomSymbol = math.random() * totalWeight
+			local symbolSum = 0
 
 			-- Go trough our list of symbols and for each add it to sum
-			-- then check if sum is greater than or equal 
+			-- then check if sum is greater than or equal
 			-- ex first weight 40, sum 40 < 90
 			-- second weight 30, sum 70 < 90
 			-- third weight 20, sum 90 = 90
@@ -77,8 +67,8 @@ local function GenerateBoard(symbols)
 			-- choosing a random symbol in that array
 			-- Hopefully you understand now
 			for _, symbol in ipairs(symbols) do
-				sum += symbol.weight
-				if rng <= sum then
+				symbolSum += symbol.weight
+				if randomSymbol <= symbolSum then
 					pickedSymbol = symbol.id
 					break
 				end
@@ -91,58 +81,15 @@ local function GenerateBoard(symbols)
 	return Board
 end
 
-local function autoBonusSpin()
-	local bonusSpins = 5
-
-	-- do 1 spin with the bonus spin symbols
-	local board = GenerateBoard(bonusSymbolsList)
-	-- show the board
-	showBoard(board)
-	-- give bonus spins for bonus symbol
-    -- remove bonus symbols before next spin
-	for i = 1, row do
-        for j = 1, col do
-            if board[i][j] == 10 then
-                bonusSpins += 1
-                board[i][j] = 11
-            end
-        end
-	end
-
-    bonusSpins -= 1
-
-
-	-- do another spin but this time compare the symbols given
-	-- if a better symbol update the position
-    while bonusSpins > 0 do
-        local newBoard = GenerateBoard(symbVal.bonusSymbols)
-        for i = 1, 3 do
-        for j = 1,5 do
-            if board[i][j] > newBoard[i][j] then
-                if newBoard[i][j] == 10 then
-                    bonusSpins += 1
-                    board[i][j] = 11
-                end
-                else
-                    board[i][j] = newBoard[i][j]
-                end
-            end
-	    end
-        showBoard(board)
-        bonusSpins -= 1
-    end
-
-end
-
-local function showBoard(board)
+function SlotMachineModule.ShowBoard(board)
 	for i = 1, row do
 		for j = 1, col do
-            local value = board[i][j]
+			local value = board[i][j]
 
-	        local partName = "Cell_" .. i .. "_" .. j
-	        local part = gridFolder:FindFirstChild(partName)
+			local partName = "Cell_" .. i .. "_" .. j
+			local part = gridFolder:FindFirstChild(partName)
 
-            if part then
+			if part then
 				-- Change color depending on number
 				part.Color = Color3.fromHSV(value / 9, 1, 1)
 				-- Show number on the part
@@ -158,4 +105,45 @@ local function showBoard(board)
 	end
 end
 
-showBoard(GenerateBoard(symbolsList))
+function SlotMachineModule.AutoBonusSpin()
+	local bonusSpins = 5
+
+	-- do 1 spin with the bonus spin symbols
+	local board = SlotMachineModule.GenerateBoard(bonusSymbolsList)
+	-- show the board
+	SlotMachineModule.ShowBoard(board)
+	-- give bonus spins for bonus symbol
+	-- remove bonus symbols before next spin
+	for i = 1, row do
+		for j = 1, col do
+			if board[i][j] == 10 then
+				bonusSpins += 1
+				board[i][j] = 11
+			end
+		end
+	end
+
+	bonusSpins -= 1
+
+	-- do another spin but this time compare the symbols given
+	-- if a better symbol update the position
+	while bonusSpins > 0 do
+		local newBoard = SlotMachineModule.GenerateBoard(bonusSymbolsList)
+		for i = 1, row do
+			for j = 1, col do
+				if board[i][j] > newBoard[i][j] then
+					if newBoard[i][j] == 10 then
+						bonusSpins += 1
+						board[i][j] = 11
+					end
+				else
+					board[i][j] = newBoard[i][j]
+				end
+			end
+		end
+		SlotMachineModule.ShowBoard(board)
+		bonusSpins -= 1
+	end
+end
+
+return SlotMachineModule
