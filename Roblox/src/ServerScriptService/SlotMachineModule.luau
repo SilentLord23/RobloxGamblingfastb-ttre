@@ -32,14 +32,14 @@ local bonusSymbolsList: SymbolList = {
 	{ id = 11, weight = 19 }, -- nothing
 }
 
-function SlotMachineModule.GenerateBoard(symbols: SymbolList): Matrix
+function SlotMachineModule.GenerateBoard()
 	-- comments for you Fredrik, some may be unnecessary.
 	-- Edgar ask fredrik for context
 	local Board = { {} }
 
 	-- get the total weight of all symbols
 	local totalWeight = 0
-	for _, symbol in ipairs(symbols) do
+	for _, symbol in ipairs(symbolsList) do
 		totalWeight += symbol.weight
 	end
 
@@ -66,7 +66,56 @@ function SlotMachineModule.GenerateBoard(symbols: SymbolList): Matrix
 			-- with 40 of first symbol, 30 of next, 20 and so on and then
 			-- choosing a random symbol in that array
 			-- Hopefully you understand now
-			for _, symbol in ipairs(symbols) do
+			for _, symbol in ipairs(symbolsList) do
+				symbolSum += symbol.weight
+				if randomSymbol <= symbolSum then
+					pickedSymbol = symbol.id
+					break
+				end
+			end
+
+			Board[i][j] = pickedSymbol
+		end
+	end
+
+	return Board
+end
+
+function SlotMachineModule.GenerateBonusBoard()
+	-- comments for you Fredrik, some may be unnecessary.
+	-- Edgar ask fredrik for context
+	local Board = { {} }
+
+	-- get the total weight of all symbols
+	local totalWeight = 0
+	for _, symbol in ipairs(bonusSymbolsList) do
+		totalWeight += symbol.weight
+	end
+
+	-- For each grid spot
+	for i = 1, row do
+		Board[i] = {}
+
+		for j = 1, col do
+			local pickedSymbol = ""
+			-- Generate a float between 0 and 1 and multply with totalweight
+			-- This gives us a number between 0 and totalweight
+			-- ex. 0.45 * 200 = 90
+			local randomSymbol = math.random() * totalWeight
+			local symbolSum = 0
+
+			-- Go trough our list of symbols and for each add it to sum
+			-- then check if sum is greater than or equal
+			-- ex first weight 40, sum 40 < 90
+			-- second weight 30, sum 70 < 90
+			-- third weight 20, sum 90 = 90
+			-- therefore we have reached our symbol no 3
+
+			-- This can be made in a similiar system by creating an array
+			-- with 40 of first symbol, 30 of next, 20 and so on and then
+			-- choosing a random symbol in that array
+			-- Hopefully you understand now
+			for _, symbol in ipairs(bonusSymbolsList) do
 				symbolSum += symbol.weight
 				if randomSymbol <= symbolSum then
 					pickedSymbol = symbol.id
@@ -109,7 +158,7 @@ function SlotMachineModule.AutoBonusSpin()
 	local bonusSpins = 5
 
 	-- do 1 spin with the bonus spin symbols
-	local board = SlotMachineModule.GenerateBoard(bonusSymbolsList)
+	local board = SlotMachineModule.GenerateBonusBoardBoard()
 	-- show the board
 	SlotMachineModule.ShowBoard(board)
 	-- give bonus spins for bonus symbol
@@ -128,7 +177,7 @@ function SlotMachineModule.AutoBonusSpin()
 	-- do another spin but this time compare the symbols given
 	-- if a better symbol update the position
 	while bonusSpins > 0 do
-		local newBoard = SlotMachineModule.GenerateBoard(bonusSymbolsList)
+		local newBoard = SlotMachineModule.GenerateBonusBoard()
 		for i = 1, row do
 			for j = 1, col do
 				if board[i][j] > newBoard[i][j] then
