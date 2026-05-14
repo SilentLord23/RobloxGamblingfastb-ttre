@@ -244,7 +244,7 @@ public class window {
         isSpinning = false;
         if (win > 0) resultLabel.setText("Win: " + String.format("%.2f", win));
         else resultLabel.setText("No win");
-        balanceLabel.setText("Balance: $" + String.format("%.2f", logic.getBalance()));
+        balanceLabel.setText("Balance: ₹" + String.format("%.2f", logic.getBalance()));
     }
 
     public static void main(String[] args) {
