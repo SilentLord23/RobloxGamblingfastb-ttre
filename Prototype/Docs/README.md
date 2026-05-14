@@ -81,3 +81,8 @@ To support this multi-language environment and maintain compatibility with exter
 *   **Compilation Flags**: Updated the build process to include the -std=c++17 standard. This was required because modern libraries (like SFML) use std::optional and std::filesystem, which are not available in older C++ versions.
     
 *   **Monorepo Isolation**: To prevent collisions with Roblox Lua scripts, all Java/C++ code and assets were isolated into a dedicated subdirectory. This ensures that GitHub actions and Roblox-specific JSON projects (like Rojo) do not attempt to process the JNI files.
+
+
+### To run the code use the command
+
+java --enable-native-access=ALL-UNNAMED -Djava.library.path=. window
