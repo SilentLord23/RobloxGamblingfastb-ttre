@@ -59,7 +59,7 @@ public class window {
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         topPanel.setOpaque(false);
-        JLabel balanceLabel = new JLabel("Balance: $" + String.format("%.2f", logic.getBalance()));
+        JLabel balanceLabel = new JLabel("Balance: ₹" + String.format("%.2f", logic.getBalance()));
         balanceLabel.setFont(new Font("Arial", Font.BOLD, 24));
         balanceLabel.setForeground(Color.WHITE);
         topPanel.add(balanceLabel);
@@ -105,7 +105,7 @@ public class window {
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         controlPanel.setOpaque(false);
 
-        JButton betButton = new JButton("Bet: $" + logic.getCurrentBet());
+        JButton betButton = new JButton("Bet: ₹" + logic.getCurrentBet());
         betButton.setPreferredSize(new Dimension(150, 50));
         betButton.setFont(new Font("Arial", Font.BOLD, 18));
 
@@ -120,7 +120,7 @@ public class window {
         betButton.addActionListener(e -> {
             if (!isSpinning && !isAutospinning) {
                 logic.nextBet();
-                betButton.setText("Bet: $" + logic.getCurrentBet());
+                betButton.setText("Bet: ₹" + logic.getCurrentBet());
             }
         });
 
