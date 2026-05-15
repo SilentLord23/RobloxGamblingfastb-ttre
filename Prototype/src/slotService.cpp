@@ -1,117 +1,174 @@
 // slotService.cpp
-// JNI bridge: implements native methods declared by slotLogic.java
-// Purpose: provide a simple native slot machine backend and expose it to Java.
+// JNI bridge implementing the native slot machine backend exposed to Java.
+// Purpose: handle spins, bets, balance, and a bonus feature; expose a simple API to slotLogic.java.
 // Important notes:
-//  - This file contains process-global state (balance, bet index, last board). If the
-//    library is used from multiple Java threads, access should be synchronized.
-//  - RNG is seeded once using current time; for reproducible behavior provide an explicit seed.
-//  - JNI functions must manage local references and check for exceptions after JNI calls.
-//  - Return values use simple conventions (e.g., spin returns -1.0 when balance is insufficient).
+//  - This module uses process-global state for simplicity. If multiple independent games are
+//    required, refactor to an instance-based approach.
+//  - Access to global state is NOT synchronized. If Java code may call these methods from
+//    multiple threads, add synchronization to avoid races.
+//  - RNG is seeded once using the current time (see generator below). For deterministic
+//    behavior in tests, provide an explicit seed mechanism.
 
 #include <jni.h>
 #include <vector>
 #include <random>
 #include <ctime>
 #include "slotLogic.h"
+#include "bonusFunction.hpp"
 
-// Forward declarations from other compilation units
-// loadInternalAssets: loads textures/assets required by the native code.
-// calculate: computes the payout given the board and bet.
+// External declarations for other parts of the engine
 bool loadInternalAssets();
 double calculate(const std::vector<std::vector<int>>& board, double bet);
 
-// Global native state. These are process-wide and persist for the lifetime of the native library.
-// If you need multiple independent game instances, refactor to use an instance-based design.
-static double g_balance = 1000.0; // Current player balance
-static int g_betIndex = 1;        // Index into bet table
+// Global native state. These variables persist for the lifetime of the native library.
+// NOTE: Because these are global and unsynchronized, concurrent access from multiple threads
+// may produce data races. Protect with mutexes if you intend to call from multiple threads.
+static double g_balance = 1000.0;
+static int g_betIndex = 1;
 static std::vector<int> g_bets = {5, 10, 15, 20, 25, 50, 75, 100, 250, 500};
-// Last board is a 3x5 grid of symbol IDs (values 1..9)
-static std::vector<std::vector<int>> g_lastBoard(3, std::vector<int>(5));
+static std::vector<std::vector<int>> g_lastBoard(3, std::vector<int>(5, 0));
+
+// Bonus-related state:
+//  - g_inBonusMode: whether a bonus session is active
+//  - g_bonusSpins: remaining bonus spin count
+//  - g_locked: matrix marking positions locked during the bonus (true => locked/high-symbol)
+// Initialize locked to false for all positions by default.
+static bool g_inBonusMode = false;
+static int g_bonusSpins = 0;
+static bool g_locked[3][5] = {false};
 
 extern "C" {
 
-// JNI wrapper: loads internal assets. Returns JNI_TRUE on success, JNI_FALSE on failure.
-// Behavior: delegates to loadInternalAssets() implemented elsewhere.
+// Loads native assets via loadInternalAssets().
+// Returns JNI_TRUE if assets loaded successfully, JNI_FALSE otherwise.
 JNIEXPORT jboolean JNICALL Java_slotLogic_loadAssets(JNIEnv *env, jobject obj) {
-    // If loadInternalAssets throws/captures errors, consider translating them to Java exceptions.
     return (jboolean)loadInternalAssets();
 }
 
-// Returns the current balance as a double.
-// Note: no synchronization is performed; if multiple threads can change balance, protect access.
+// Return the current player balance as a double.
+// This is a quick accessor; callers should not assume atomicity across multiple calls.
 JNIEXPORT jdouble JNICALL Java_slotLogic_getBalance(JNIEnv *env, jobject obj) {
     return (jdouble)g_balance;
 }
 
-// Returns the current bet value (from g_bets) as a double.
+// Return the current bet amount (from g_bets at g_betIndex).
 JNIEXPORT jdouble JNICALL Java_slotLogic_getCurrentBet(JNIEnv *env, jobject obj) {
     return (jdouble)g_bets[g_betIndex];
 }
 
-// Advances to the next bet index in a circular fashion.
-// No return value. Caller should update any UI to reflect new bet size.
+// Advance to next bet option. Betting is locked while in a bonus session to avoid
+// inconsistencies between spins and bonus resolution.
 JNIEXPORT void JNICALL Java_slotLogic_nextBet(JNIEnv *env, jobject obj) {
-    g_betIndex = (g_betIndex + 1) % g_bets.size();
+    if (!g_inBonusMode) { // Lock betting during bonus
+        g_betIndex = (g_betIndex + 1) % g_bets.size();
+    }
 }
 
-// Performs a spin. Returns the amount won (>= 0). If balance is insufficient, returns -1.0.
-// Side effects: updates g_balance and g_lastBoard.
-// Thread-safety: this function is not synchronized. If invoked concurrently, state races may occur.
+// Perform a spin. Behavior depends on whether a bonus session is active:
+//  - Normal play: deducts bet from balance, randomizes g_lastBoard, checks bonus trigger,
+//    computes line wins via calculate(), updates balance, and returns win amount.
+//    Returns -1.0 if balance is insufficient to place the bet.
+//  - Bonus play: consumes one bonus spin, runs performBonusRoll() to update board and locked
+//    positions, and returns 0.0 because bonus payout is deferred until finalizeBonus().
 JNIEXPORT jdouble JNICALL Java_slotLogic_spin(JNIEnv *env, jobject obj) {
-    double currentBet = (double)g_bets[g_betIndex];
-    if (g_balance < currentBet) return -1.0; // indicate insufficient funds
-    g_balance -= currentBet;
-
-    // RNG: seeded once using current time. Using a static generator avoids re-seeding on each call.
     static std::mt19937 gen(static_cast<unsigned int>(std::time(nullptr)));
-    std::uniform_int_distribution<> dis(1, 9);
+    double currentBet = (double)g_bets[g_betIndex];
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 5; j++) {
-            g_lastBoard[i][j] = dis(gen);
+    if (!g_inBonusMode) {
+        // --- NORMAL SPIN LOGIC ---
+        if (g_balance < currentBet) return -1.0;
+        g_balance -= currentBet;
+
+        std::uniform_int_distribution<> dis(1, 100);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 5; j++) {
+                int rng = dis(gen);
+                // 5% chance to land a bonus symbol in normal play
+                if (rng <= 5) g_lastBoard[i][j] = BONUS_SYMBOL;
+                else g_lastBoard[i][j] = (rng % 9) + 1;
+            }
         }
+
+        // Check for Bonus Trigger
+        int triggerCount = countBonusSymbols(g_lastBoard);
+        if (triggerCount >= 3) {
+            g_inBonusMode = true;
+            g_bonusSpins = 5 + (triggerCount - 3); // 3=5, 4=6, 5=7...
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 5; j++) g_locked[i][j] = false;
+            }
+        }
+
+        double win = calculate(g_lastBoard, currentBet);
+        g_balance += win;
+        return (jdouble)win;
+
+    } else {
+        // --- BONUS SPIN LOGIC ---
+        // Consume a bonus spin and update board/locked positions. Bonus payouts are
+        // awarded when the Java side calls finalizeBonus().
+        g_bonusSpins--;
+        performBonusRoll(g_lastBoard, g_locked, g_bonusSpins);
+        return 0.0; // Bonus spins don't pay out until finalized
+    }
+}
+
+// Finalize the bonus session and compute the total bonus payout.
+// If all positions become locked (jackpot), a large fixed payout is awarded; otherwise
+// winnings are computed using the normal calculate() routine. This clears the bonus flag.
+JNIEXPORT jdouble JNICALL Java_slotLogic_finalizeBonus(JNIEnv *env, jobject obj) {
+    double currentBet = (double)g_bets[g_betIndex];
+    double totalWin = 0;
+
+    if (checkJackpot(g_locked)) {
+        totalWin = currentBet * 1000.0;
+    } else {
+        totalWin = calculate(g_lastBoard, currentBet);
     }
 
-    double win = calculate(g_lastBoard, currentBet);
-    g_balance += win;
-    return (jdouble)win;
+    g_balance += totalWin;
+    g_inBonusMode = false;
+    return (jdouble)totalWin;
 }
 
-// Returns a 2D int array (jobjectArray of jintArray) representing the last board.
-// JNI responsibility: create proper Java arrays and manage local references.
-// The caller (Java side) receives its own copy of the data; modifying the returned arrays
-// on the Java side is allowed and will not affect native g_lastBoard.
+// Query whether a bonus session is currently active.
+JNIEXPORT jboolean JNICALL Java_slotLogic_isBonusActive(JNIEnv *env, jobject obj) {
+    return (jboolean)g_inBonusMode;
+}
+
+// Return remaining bonus spins (0 if none).
+JNIEXPORT jint JNICALL Java_slotLogic_getBonusSpins(JNIEnv *env, jobject obj) {
+    return (jint)g_bonusSpins;
+}
+
+// Return the last board as a Java 2D int array. The native code creates new Java arrays
+// and copies values from g_lastBoard. Local references (row arrays) are deleted after use
+// to avoid exhausting the local reference table.
 JNIEXPORT jobjectArray JNICALL Java_slotLogic_getLastBoard(JNIEnv *env, jobject obj) {
     jclass intArrayClass = env->FindClass("[I");
-    if (intArrayClass == nullptr) {
-        // If class lookup failed, an exception is pending. Return nullptr to propagate to Java.
-        return nullptr;
-    }
-
     jobjectArray board = env->NewObjectArray(3, intArrayClass, nullptr);
-    if (board == nullptr) {
-        // OutOfMemoryError will be pending; return to let Java handle it.
-        return nullptr;
-    }
-
     for (int i = 0; i < 3; i++) {
         jintArray row = env->NewIntArray(5);
-        if (row == nullptr) {
-            // Clean up and return if allocation failed. Local refs will be freed when native method returns,
-            // but explicitly returning nullptr lets Java see the pending exception.
-            return nullptr;
-        }
-
         jint temp[5];
-        for (int j = 0; j < 5; j++) {
-            temp[j] = g_lastBoard[i][j];
-        }
+        for (int j = 0; j < 5; j++) temp[j] = (jint)g_lastBoard[i][j];
         env->SetIntArrayRegion(row, 0, 5, temp);
         env->SetObjectArrayElement(board, i, row);
-        // Delete the local reference to the row since we've stored it in the parent array.
         env->DeleteLocalRef(row);
     }
     return board;
+}
+
+// Force entry into bonus mode (used for testing or special events). This resets the bonus
+// structures and sets a preset number of bonus spins.
+JNIEXPORT void JNICALL Java_slotLogic_forceBonus(JNIEnv *env, jobject obj) {
+    g_inBonusMode = true;
+    g_bonusSpins = 8;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 5; j++) {
+            g_locked[i][j] = false;
+            g_lastBoard[i][j] = 0;
+        }
+    }
 }
 
 }
