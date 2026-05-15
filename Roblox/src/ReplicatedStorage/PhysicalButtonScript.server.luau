@@ -8,7 +8,9 @@ local isSpinning = false
 
 script.Parent.ProximityPrompt.Triggered:Connect(function(player)
 	-- lock from spinning during a spin
-	if isSpinning then return end
+	if isSpinning then
+		return
+	end
 	isSpinning = true
 
 	print("Triggered started")

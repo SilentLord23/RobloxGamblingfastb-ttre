@@ -28,9 +28,9 @@ local symbolsList: SymbolList = {
 }
 
 local bonusSymbolsList: SymbolList = {
-		{ id = 9, weight = 3 },
-		{ id = 10, weight = 1 },
-		{ id = 11, weight = 25 },
+	{ id = 9, weight = 3 },
+	{ id = 10, weight = 1 },
+	{ id = 11, weight = 25 },
 }
 
 function SlotMachineModule.GenerateBoard()
