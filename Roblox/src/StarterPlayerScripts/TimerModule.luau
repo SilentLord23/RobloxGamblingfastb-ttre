@@ -2,7 +2,7 @@ local JumpscareModule = require(script.Parent:WaitForChild("JumpscareModule"))
 
 local TimerModule = {}
 
-function TimerModule.startTimer(time)
+function TimerModule.startTimer(time, player)
     print("Timer started!")
 
     local timer = time
@@ -13,7 +13,7 @@ function TimerModule.startTimer(time)
 	end
 
     print("Timer finished!")
-	JumpscareModule.startJumpscare()
+	JumpscareModule.startJumpscare(player)
 end
 
 return TimerModule

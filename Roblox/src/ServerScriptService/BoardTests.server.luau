@@ -1,5 +1,6 @@
 local ServerScriptService = game:GetService("ServerScriptService")
-local slotWinnings = game:WaitForChild("symbVal")
+local slotWinnings = require(ServerScriptService:WaitForChild("SlotWinningsModule"))
+local slotmachine = require(ServerScriptService:WaitForChild("SlotMachineModule"))
 
 local function testBoardOfSameSymbols()
 	-- setup
@@ -24,11 +25,12 @@ end
 
 local function testGeneratedBoard()
     -- setup
-    board = slotmachine.generateBoard()
+    local board = slotmachine.generateBoard()
+    local bet = 1
 
     print (board)
     -- act
-    local winningAmount = slotWinnings.SlotMachineLogic.CalculateWinnings(board1, bet)
+    local winningAmount = slotWinnings.SlotMachineLogic.CalculateWinnings(board, bet)
     -- assert
     -- Needs manual review since the board is random each time
     print(winningAmount)
@@ -36,4 +38,5 @@ local function testGeneratedBoard()
 end
 
 testBoardOfSameSymbols()
+testGeneratedBoard()
 print("Test passed")
