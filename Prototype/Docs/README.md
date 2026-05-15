@@ -86,3 +86,39 @@ To support this multi-language environment and maintain compatibility with exter
 ### To run the code use the command
 
 java --enable-native-access=ALL-UNNAMED -Djava.library.path=. window
+
+
+**Project Milestone: Core & Bonus Implementation**
+--------------------------------------------------
+
+### **#86: Make the Logic**
+
+This milestone focused on the mathematical and state-driven engine within the C++ backend.
+
+*   **Bonus State Machine**: Developed a secondary game loop in slotService.cpp that triggers when the scatter count reaches ≥3.
+    
+*   **Hold & Win Mechanics**: Created the logic in bonusFunction.cpp to handle "Sticky" symbols. This ensures that the highest icon (ID 9) remains locked in the g\_locked matrix across multiple spins.
+    
+*   **Payout Calculations**: Integrated a terminal check for the **1000x Grand Jackpot**. The engine now calculates the final payout only after all bonus spins are exhausted or the grid is entirely filled with locked symbols.
+    
+
+### **#87: Update Window (window.java)**
+
+The frontend was overhauled to handle the visual transitions and the unique flow of the bonus round.
+
+*   **State-Aware UI**: Updated the runSpin method to detect when the engine enters "Bonus Mode," allowing the UI to switch from manual spins to an automated "Hold & Win" sequence.
+    
+*   **Transition Effects**: Implemented a flashing "Wave" animation using a high-speed Timer to signal the transition from the base game to the bonus round.
+    
+*   **Debug Integration**: Added a specialized **DEBUG: BONUS** button in the control panel. This calls the native forceBonus() method, allowing for immediate testing of the bonus logic and visual reveals without relying on RNG.
+    
+
+### **#88: Import Assets**
+
+This issue covered the expansion of the resource management system to support the new "Bonus" symbol and high-resolution textures.
+
+*   **Texture Array Expansion**: Refactored importAssets.cpp to increase the std::array size to 10.
+    
+*   **Path Routing**: Updated the loading logic to specifically map the 10th slot (index 9) to Assets/bonus.png, while keeping the sequential loading for standard symbols 1-9.
+    
+*   **Pre-flight Validation**: Enhanced the load() method to return a failure state if any single asset is missing, ensuring the JNI bridge does not initialize the game with corrupted or missing graphical data.
