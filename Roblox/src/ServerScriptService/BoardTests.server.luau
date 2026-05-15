@@ -25,8 +25,8 @@ end
 
 local function testGeneratedBoard()
     -- setup
-    local board = slotmachine.generateBoard()
-    local bet = 1
+	local board = slotmachine.generateBoard()
+	local bet = 1
 
     print (board)
     -- act
