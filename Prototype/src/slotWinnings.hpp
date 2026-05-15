@@ -13,6 +13,10 @@
 
 #include <vector>
 
+// Calculate total winnings for a given slot board and bet.
+// board: 3x5 grid indexed as board[row][col]
+// bet: current bet amount; return value is total payout amount (may be 0.0)
+// Implemented in slotWinnings.cpp
 double calculate(const std::vector<std::vector<int>>& board, double bet);
 
 #endif

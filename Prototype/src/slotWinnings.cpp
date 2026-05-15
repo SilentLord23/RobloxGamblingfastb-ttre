@@ -13,6 +13,7 @@
 #include "window.h"
 #include "slotWinnings.hpp"
 
+// Coordinate pair representing a reel column and row within a 3x5 board.
 struct Coord {
     int col; // reel index (0..4)
     int row; // row index (0..2)

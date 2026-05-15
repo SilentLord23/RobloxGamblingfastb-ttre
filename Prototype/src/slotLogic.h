@@ -55,6 +55,38 @@ JNIEXPORT jdouble JNICALL Java_slotLogic_spin
 JNIEXPORT jobjectArray JNICALL Java_slotLogic_getLastBoard
   (JNIEnv *, jobject);
 
+/*
+ * Class:     slotLogic
+ * Method:    isBonusActive
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_slotLogic_isBonusActive
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     slotLogic
+ * Method:    getBonusSpins
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_slotLogic_getBonusSpins
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     slotLogic
+ * Method:    finalizeBonus
+ * Signature: ()D
+ */
+JNIEXPORT jdouble JNICALL Java_slotLogic_finalizeBonus
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     slotLogic
+ * Method:    forceBonus
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_slotLogic_forceBonus
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
