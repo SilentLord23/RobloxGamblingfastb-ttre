@@ -1,8 +1,13 @@
+local SlotWinningsModule = {}
+
+
 local ServerScriptService = game:GetService("ServerScriptService")
-local SlotMachineLogic = {}
+
+-- Import the Generator and the Data
+local SlotMachine = require(game.ServerScriptService.SlotMachineModule)
 
 -- Winning Line Definitions (Column, Row)
-SlotMachineLogic.PayLines = {
+SlotWinningsModule.PayLines = {
     {{1,1}, {2,1}, {3,1}, {4,1}, {5,1}}, -- 1: Top row
     {{1,2}, {2,2}, {3,2}, {4,2}, {5,2}}, -- 2: Middle row
     {{1,3}, {2,3}, {3,3}, {4,3}, {5,3}}, -- 3: Bottom row
@@ -30,10 +35,10 @@ local PAYTABLE = {
 }
 
 -- The Math Engine: Checks the board against paylines
-function SlotMachineLogic.CalculateWinnings(board, currentBet)
+function SlotWinningsModule.CalculateWinnings(board, currentBet)
     local totalWinnings = 0
     
-    for _, line in ipairs(SlotMachineLogic.PayLines) do
+    for _, line in ipairs(SlotWinningsModule.PayLines) do
         local firstSymbol = nil
         local matchCount = 0
         
@@ -64,19 +69,14 @@ function SlotMachineLogic.CalculateWinnings(board, currentBet)
 end
 
 -- This handles the imports and runs the spin
-function SlotMachineLogic.ProcessSpin(betAmount)
-    -- Import the Generator and the Data
-    local slotMachine = script.Parent:WaitForChild("slotMachine")
-
-    local symbVal = script.Parent:WaitForChild("symbVal")
-    
+function SlotWinningsModule.ProcessSpin(betAmount)
     -- Generate the board using the symbol list from symbVal
-    local board = slotMachine.GenerateBoard(symbVal.symbols)
+    local board = SlotMachine.GenerateBoard(SlotMachine.symbolsList)
     
     -- Calculate result
-    local winnings = SlotMachineLogic.CalculateWinnings(board, betAmount)
+    local winnings = SlotWinningsModule.CalculateWinnings(board, betAmount)
     
     return board, winnings
 end
 
-return SlotMachineLogic
+return SlotWinningsModule
