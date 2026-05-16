@@ -10,6 +10,7 @@ function JumpscareModule.startJumpscare(player)
 	local BlackScreen = PlayerGui:WaitForChild("FadeGui"):WaitForChild("BlackScreen")
 	local Ladok = PlayerGui:WaitForChild("LadokGui"):WaitForChild("Ladok")
 	local BalanceLabel = PlayerGui:WaitForChild("BalanceGui"):WaitForChild("BalanceLabel")
+	local BetLabel = PlayerGui:WaitForChild("BetGui"):WaitForChild("BetLabel")
 	-- play some sound?
 
 	-- fade the screen and teleport the player around in Fnaf
@@ -69,6 +70,7 @@ function JumpscareModule.startJumpscare(player)
 	FadeModule.fadeOut(BlackScreen, 3)
 	task.wait(3)
 	BalanceLabel.Visible = true
+	BetLabel.Visible = true
 end
 
 return JumpscareModule

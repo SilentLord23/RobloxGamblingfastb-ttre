@@ -14,7 +14,7 @@ function FadeModule.fadeOut(frame, duration)
 	local tween = TweenService:Create(frame, TweenInfo.new(duration), { BackgroundTransparency = 1 })
 
 	tween:Play()
-	
+
 	return tween
 end
 

@@ -1,8 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Create balance object
-local balance = Instance.new("IntValue")
-balance.Name = "GlobalBalance"
-balance.Value = 1000
+local Balance = Instance.new("IntValue")
+Balance.Name = "GlobalBalance"
+Balance.Value = 1000
 
-balance.Parent = ReplicatedStorage
+Balance.Parent = ReplicatedStorage
+
+-- Create bet object
+local Bet = Instance.new("IntValue")
+Bet.Name = "GlobalBet"
+Bet.Value = 10
+
+Bet.Parent = ReplicatedStorage
