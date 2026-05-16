@@ -1,6 +1,6 @@
 local SlotMachineModule = {}
 
-local gridFolder = workspace.Grid
+local gridFolder = workspace:WaitForChild("Grid")
 
 type Symbol = {
 	id: number,
@@ -15,21 +15,22 @@ type Matrix = { { number } }
 -- Higher weight = higher probability of being selected so 1 is most common and 9 least common
 -- For Fredrik. This is an array with objects, i was just stupid and drunk...
 local symbolsList: SymbolList = {
-	{ id = 1, weight = 40 },
-	{ id = 2, weight = 40 },
-	{ id = 3, weight = 40 },
-	{ id = 4, weight = 30 },
-	{ id = 5, weight = 30 },
-	{ id = 6, weight = 7 },
-	{ id = 7, weight = 7 },
-	{ id = 8, weight = 5 },
+	{ id = 1, weight = 6 },
+	{ id = 2, weight = 6 },
+	{ id = 3, weight = 5 },
+	{ id = 4, weight = 5 },
+	{ id = 5, weight = 4 },
+	{ id = 6, weight = 4 },
+	{ id = 7, weight = 3 },
+	{ id = 8, weight = 3 },
 	{ id = 9, weight = 2 },
+	{ id = 10, weight = 1 }, -- bonus symbol
 }
 
 local bonusSymbolsList: SymbolList = {
-	{ id = 9, weight = 5 },
-	{ id = 10, weight = 1 }, -- bonus symbol
-	{ id = 11, weight = 19 }, -- nothing
+	{ id = 9, weight = 3 },
+	{ id = 10, weight = 1 },
+	{ id = 11, weight = 25 },
 }
 
 function SlotMachineModule.GenerateBoard()
@@ -48,7 +49,7 @@ function SlotMachineModule.GenerateBoard()
 		Board[i] = {}
 
 		for j = 1, col do
-			local pickedSymbol = ""
+			local pickedSymbol = 0
 			-- Generate a float between 0 and 1 and multply with totalweight
 			-- This gives us a number between 0 and totalweight
 			-- ex. 0.45 * 200 = 90
@@ -154,13 +155,30 @@ function SlotMachineModule.ShowBoard(board)
 	end
 end
 
+function SlotMachineModule.CheckBonusSymbol(board)
+	local BonusCounter = 0
+	for i = 1, row do
+		for j = 1, col do
+			if board[i][j] == 10 then
+				BonusCounter += 1
+			end
+		end
+	end
+	if BonusCounter >= 3 then
+		return true
+	else
+		return false
+	end
+end
+
 function SlotMachineModule.AutoBonusSpin()
 	local bonusSpins = 5
 
 	-- do 1 spin with the bonus spin symbols
-	local board = SlotMachineModule.GenerateBonusBoardBoard()
+	local board = SlotMachineModule.GenerateBonusBoard()
 	-- show the board
 	SlotMachineModule.ShowBoard(board)
+	task.wait(3)
 	-- give bonus spins for bonus symbol
 	-- remove bonus symbols before next spin
 	for i = 1, row do
@@ -180,19 +198,20 @@ function SlotMachineModule.AutoBonusSpin()
 		local newBoard = SlotMachineModule.GenerateBonusBoard()
 		for i = 1, row do
 			for j = 1, col do
-				if board[i][j] > newBoard[i][j] then
+				if newBoard[i][j] < board[i][j] then
 					if newBoard[i][j] == 10 then
 						bonusSpins += 1
 						board[i][j] = 11
 					end
-				else
 					board[i][j] = newBoard[i][j]
 				end
 			end
 		end
 		SlotMachineModule.ShowBoard(board)
+		task.wait(3)
 		bonusSpins -= 1
 	end
+	return board
 end
 
 return SlotMachineModule
