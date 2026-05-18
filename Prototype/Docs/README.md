@@ -4,8 +4,6 @@
 **1\. Issue Progress & Resolutions**
 ------------------------------------
 
-The following tasks from the project roadmap (referencing **image\_8398bb.png**) have been successfully implemented:
-
 ### **Make the window (#76)**
 
 *   Developed the primary graphical user interface using Java Swing.
