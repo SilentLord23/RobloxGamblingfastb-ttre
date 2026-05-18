@@ -7,19 +7,31 @@ Welcome to our projInda project, Edgar Torture Machine™. ProjInda, DD1349, is 
 [demo video](https://www.youtube.com/watch?v=K810rDBlO4Y)
 
 ## Installation
+### Use Git with Roblox studio
 
 Install VS Code
 
 Install Rojo Plugin in VS Code
 1. Find it in plugin store
-2. 
+2. pull git repo
+3. use command palette to install Rojo into the repo
+4. Edit default.project.json to include all folders you want to use in VS code
+5. Add "ignoreUnkownInstances": true so Rojo doesn't delete stuff in Roblox Studio
+6. Launch Rojo Local server through command palette
 
 Install Rojo plugin in Roblox Studio
+1. Find it under plugins in asset store
+2. Click to launch after install
+3. The plugin will ask to connect
+4. Accept and review changes it wants
+5. Rojo will now update Studios when coding in VS code
+
+Use git in VS code to upload changes.
 
 
 
 ## Thoughts
-
+Rojo was har to work with. It deleted our stuff, added back things we had deleted, the editor in Roblox studio was much better as it can find objects in the world, It created it's own folders instead of using the existing ones so we had to manually move scripts to their correct locations.
 
 We hate roblox. They hate fun. We were unable to upload audio, images, ANYTHING fun. Therefore we do not recommend creating your own roblox experience unless it is strictly made with roblox assets, blender models and your own non copyright music. Instead look into godot, as we should have done too.
 
