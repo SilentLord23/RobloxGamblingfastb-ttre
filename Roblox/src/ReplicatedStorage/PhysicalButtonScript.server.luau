@@ -51,7 +51,7 @@ script.Parent.ProximityPrompt.Triggered:Connect(function(player)
 
 	isSpinning = false
 
-	-- After spin check win/lose conditions
+	-- After spin check win/lose conditions.
 	if Balance.Value < 5 then
 		FadeModule.fadeIn(BlackScreen, 3)
 		task.wait(3)
