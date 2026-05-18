@@ -6,6 +6,11 @@ Welcome to our projInda project, Edgar Torture Machine™. ProjInda, DD1349, is 
 ## Demo Video
 [demo video](https://www.youtube.com/watch?v=K810rDBlO4Y)
 
+## Run games
+Roblox version can be played by adding Coolajonas06/VadHander on roblox
+
+To run java version cd into prototype/src and run java window
+
 ## Installation
 ### Use Git with Roblox studio
 
