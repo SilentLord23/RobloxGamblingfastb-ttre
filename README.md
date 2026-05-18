@@ -5,7 +5,7 @@ Welcome to our projInda project, Edgar Torture Machine™. ProjInda, DD1349, is 
 
 ## Demo Video
 [demo video](https://www.youtube.com/watch?v=K810rDBlO4Y)
-## thoughts
+## Thoughts
 
 
 We hate roblox. They hate fun. We were unable to upload audio, images, ANYTHING fun. Therefore we do not recommend creating your own roblox experience unless it is strictly made with roblox assets, blender models and your own non copyright music. Instead look into godot, as we should have done too.
