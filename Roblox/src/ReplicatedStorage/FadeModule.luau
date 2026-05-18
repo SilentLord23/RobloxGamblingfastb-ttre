@@ -3,6 +3,7 @@ local TweenService = game:GetService("TweenService")
 local FadeModule = {}
 
 function FadeModule.fadeIn(frame, duration)
+	-- "Animation service"
 	local tween = TweenService:Create(frame, TweenInfo.new(duration), { BackgroundTransparency = 0 })
 
 	tween:Play()
