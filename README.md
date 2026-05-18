@@ -12,3 +12,7 @@ We hate roblox. They hate fun. We were unable to upload audio, images, ANYTHING 
 
 Our favorite images out of this project
 ![img1](Roblox/Assets/IMG_6617_sketch.png)
+
+![img2](Roblox/Assets/IMG_6574_sketch.png)
+
+![img3](Roblox/Assets/IMG_5921_sketch.png)
