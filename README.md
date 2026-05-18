@@ -5,7 +5,7 @@ Welcome to our projInda project, Edgar Torture Machine™. ProjInda, DD1349, is 
 
 ## Demo Video
 [demo video](https://www.youtube.com/watch?v=K810rDBlO4Y)
-
+https://www.youtube.com/watch?v=K810rDBlO4Y
 ## thoughts
 
 
