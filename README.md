@@ -8,6 +8,8 @@ Welcome to our projInda project, Edgar Torture Machine™. ProjInda, DD1349, is 
 
 [Edgar caught in 4k (This was after övning Ric)](https://youtu.be/zaSnT4A1vBQ)
 
+[edgar Creampie?!](https://youtu.be/XfJ7xzRSk34)
+
 ## Run games
 Roblox version can be played by adding Coolajonas06/VadHander on roblox
 
