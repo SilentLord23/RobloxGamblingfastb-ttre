@@ -4,8 +4,8 @@
 Welcome to our projInda project, Edgar Torture Machine™. ProjInda, DD1349, is the finishing course in the introductory programming courses of KTH civilengineeringprogram computer enginering. Our main goal was to create a VERY great experience for our teacher's assistant, Edgar. Hello Edgar, hope you liked it as much as we did! The project was originally going to be written and created in Roblox Studios and its main language luau, a modified version of lua made specifically for roblox. Due to unforseen circumstances of roblox not allowing our audio and images, we also created a version made with Java, JNI (Java Native Interface), C++, that followed our vision of the gambling machine more closely. To learn these languages we used Roblox Studio Docs, tutorials on youtube, ChatGPT and Gemini, which were also used for troubelshooting. Roblox studio plugins, Redupe, build tools f3x, archimedes, Rojo. VS code plugins, Rojo. The game should hopefully be a slot machine with pictures of Edgar as the symbols, a spin button, bonus spins and a balance and bet system. As it was made in roblox there will also be the story leading to the slot machine.
 
 ## Demo Video
-![demo video](https://www.youtube.com/watch?v=K810rDBlO4Y)
-![Edgar caught in 4k (This was after övning Ric)](https://youtu.be/zaSnT4A1vBQ)
+[demo video](https://www.youtube.com/watch?v=K810rDBlO4Y)
+[Edgar caught in 4k (This was after övning Ric)](https://youtu.be/zaSnT4A1vBQ)
 
 ## Run games
 Roblox version can be played by adding Coolajonas06/VadHander on roblox
